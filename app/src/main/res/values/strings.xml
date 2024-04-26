@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BirdGame</string>
+    <string name="topScore">Top Score</string>
+    <string name="defaultScore">100</string>
 </resources>

@@ -44,13 +44,17 @@ class GameView(var gameContext: Context) : View(gameContext) {
         deviceWidth = displayMetrics.widthPixels
         deviceHeight = displayMetrics.heightPixels
         trash = BitmapFactory.decodeResource(resources, R.drawable.nest)
-        hand = BitmapFactory.decodeResource(resources, R.drawable.hand)
-        plastic = BitmapFactory.decodeResource(resources, R.drawable.egg)
+        hand = BitmapFactory.decodeResource(resources, R.drawable.bird)
+        plastic = BitmapFactory.decodeResource(resources, R.drawable.worm)
         handler = Handler()
         runnable = Runnable { invalidate() }
         random = Random()
+        val minY = deviceHeight / 3  // Adjust this value as needed to set the minimum Y position
+        val maxY = deviceHeight * 2 / 3  // Adjust this value as needed to set the maximum Y position
+
         handX = deviceWidth + random.nextInt(300)
-        handY = random.nextInt(600)
+//        handY = random.nextInt(600)
+        handY = minY + random.nextInt(maxY - minY)
         plasticX = handX
         plasticY = handY + hand.height - 30
         textPaint = Paint()
@@ -66,7 +70,9 @@ class GameView(var gameContext: Context) : View(gameContext) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawColor(Color.BLUE)
+//        canvas.drawColor(Color.BLUE)
+        var backgroundImg = BitmapFactory.decodeResource(resources, R.drawable.gamebackground1)
+        canvas.drawBitmap(backgroundImg, 0f,0f,null)
         if (!plasticAnimation) {
             handX -= handSpeed
             plasticX -= handSpeed
