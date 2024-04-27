@@ -3,6 +3,7 @@ package com.example.birdgame
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -39,6 +40,20 @@ class GameView(var gameContext: Context) : View(gameContext) {
     private var trashX: Int
     private var trashY: Int
 
+    private val sharedPreferences: SharedPreferences = gameContext.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE)
+    fun saveHighScore(score: Int){
+        val currentHighScore = getHighScore()
+        if (score > currentHighScore) {
+            with(sharedPreferences.edit()) {
+                putInt("highScore", score)
+                apply()
+            }
+        }
+
+    }
+    fun getHighScore(): Int {
+        return sharedPreferences.getInt("highScore", 0)
+    }
     init {
         val displayMetrics = resources.displayMetrics
         deviceWidth = displayMetrics.widthPixels
@@ -85,6 +100,7 @@ class GameView(var gameContext: Context) : View(gameContext) {
             handSpeed = 10 + random.nextInt(11)
             life--
             if (life == 0) {
+                saveHighScore(points)
                 val intent = Intent(gameContext, GameOver::class.java)
                 intent.putExtra("points", points)
                 gameContext.startActivity(intent)
@@ -107,6 +123,7 @@ class GameView(var gameContext: Context) : View(gameContext) {
         if (plasticAnimation && plasticY + plastic.height >= deviceHeight) {
             life--
             if (life == 0) {
+                saveHighScore(points)
                 val intent = Intent(gameContext, GameOver::class.java)
                 intent.putExtra("points", points)
                 gameContext.startActivity(intent)
