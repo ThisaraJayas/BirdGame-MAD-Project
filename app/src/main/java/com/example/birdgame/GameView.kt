@@ -17,18 +17,18 @@ import java.util.Random
 class GameView(var gameContext: Context) : View(gameContext) {
     private var deviceWidth: Int
     private var deviceHeight: Int
-    private var trash: Bitmap
-    private var hand: Bitmap
-    private var plastic: Bitmap
+    private var nest: Bitmap
+    private var bird: Bitmap
+    private var worm: Bitmap
     private var handler: Handler
     private var runnable: Runnable
     private val UPDATE_MILLIS: Long = 30
-    private var handX: Int
-    private var handY: Int
-    private var plasticX: Int
-    private var plasticY: Int
+    private var birdX: Int
+    private var birdY: Int
+    private var wormX: Int
+    private var wormY: Int
     private var random: Random
-    private var plasticAnimation = false
+    private var wormAnimation = false
     private var points = 0
     private val TEXT_SIZE = 120f
     private var textPaint: Paint
@@ -58,20 +58,20 @@ class GameView(var gameContext: Context) : View(gameContext) {
         val displayMetrics = resources.displayMetrics
         deviceWidth = displayMetrics.widthPixels
         deviceHeight = displayMetrics.heightPixels
-        trash = BitmapFactory.decodeResource(resources, R.drawable.nest)
-        hand = BitmapFactory.decodeResource(resources, R.drawable.bird)
-        plastic = BitmapFactory.decodeResource(resources, R.drawable.worm)
+        nest = BitmapFactory.decodeResource(resources, R.drawable.nest)
+        bird = BitmapFactory.decodeResource(resources, R.drawable.bird)
+        worm = BitmapFactory.decodeResource(resources, R.drawable.worm)
         handler = Handler()
         runnable = Runnable { invalidate() }
         random = Random()
-        val minY = deviceHeight / 3  // Adjust this value as needed to set the minimum Y position
-        val maxY = deviceHeight * 2 / 3  // Adjust this value as needed to set the maximum Y position
+        val minY = deviceHeight / 3
+        val maxY = deviceHeight * 2 / 3
 
-        handX = deviceWidth + random.nextInt(300)
-//        handY = random.nextInt(600)
-        handY = minY + random.nextInt(maxY - minY)
-        plasticX = handX
-        plasticY = handY + hand.height - 30
+        birdX = deviceWidth + random.nextInt(300)
+//        birdY = random.nextInt(600)
+        birdY = minY + random.nextInt(maxY - minY)
+        wormX = birdX
+        wormY = birdY + bird.height - 30
         textPaint = Paint()
         textPaint.color = Color.rgb(255, 0, 0)
         textPaint.textSize = TEXT_SIZE
@@ -79,24 +79,23 @@ class GameView(var gameContext: Context) : View(gameContext) {
         healthPaint = Paint()
         healthPaint.color = Color.GREEN
         handSpeed = 10 + random.nextInt(11)
-        trashX = deviceWidth / 2 - trash.width / 2
-        trashY = deviceHeight - trash.height
+        trashX = deviceWidth / 2 - nest.width / 2
+        trashY = deviceHeight - nest.height
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-//        canvas.drawColor(Color.BLUE)
         var backgroundImg = BitmapFactory.decodeResource(resources, R.drawable.gamebackground1)
         canvas.drawBitmap(backgroundImg, 0f,0f,null)
-        if (!plasticAnimation) {
-            handX -= handSpeed
-            plasticX -= handSpeed
+        if (!wormAnimation) {
+            birdX -= handSpeed
+            wormX -= handSpeed
         }
-        if (handX <= -hand.width) {
-            handX = deviceWidth + random.nextInt(300)
-            plasticX = handX
-            handY = random.nextInt(600)
-            plasticY = handY + hand.height - 30
+        if (birdX <= -bird.width) {
+            birdX = deviceWidth + random.nextInt(300)
+            wormX = birdX
+            birdY = random.nextInt(600)
+            wormY = birdY + bird.height - 30
             handSpeed = 10 + random.nextInt(11)
             life--
             if (life == 0) {
@@ -107,20 +106,20 @@ class GameView(var gameContext: Context) : View(gameContext) {
                 (gameContext as Activity).finish()
             }
         }
-        if (plasticAnimation) {
-            plasticY += 40
+        if (wormAnimation) {
+            wormY += 40
         }
-        if (plasticAnimation && plasticX + plastic.width >= trashX && plasticX <= trashX + trash.width && plasticY + plastic.height >= deviceHeight - trash.height && plasticY <= deviceHeight) {
-            handX = deviceWidth + random.nextInt(300)
-            plasticX = handX
-            handY = random.nextInt(600)
-            plasticY = handY + hand.height - 30
+        if (wormAnimation && wormX + worm.width >= trashX && wormX <= trashX + nest.width && wormY + worm.height >= deviceHeight - nest.height && wormY <= deviceHeight) {
+            birdX = deviceWidth + random.nextInt(300)
+            wormX = birdX
+            birdY = random.nextInt(600)
+            wormY = birdY + bird.height - 30
             handSpeed = 10 + random.nextInt(11)
             points++
-            trashX = hand.width + random.nextInt(deviceWidth - 2 * hand.width)
-            plasticAnimation = false
+            trashX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
+            wormAnimation = false
         }
-        if (plasticAnimation && plasticY + plastic.height >= deviceHeight) {
+        if (wormAnimation && wormY + worm.height >= deviceHeight) {
             life--
             if (life == 0) {
                 saveHighScore(points)
@@ -129,16 +128,16 @@ class GameView(var gameContext: Context) : View(gameContext) {
                 gameContext.startActivity(intent)
                 (gameContext as Activity).finish()
             }
-            handX = deviceWidth + random.nextInt(300)
-            plasticX = handX
-            handY = random.nextInt(600)
-            plasticY = handY + hand.height - 30
-            trashX = hand.width + random.nextInt(deviceWidth - 2 * hand.width)
-            plasticAnimation = false
+            birdX = deviceWidth + random.nextInt(300)
+            wormX = birdX
+            birdY = random.nextInt(600)
+            wormY = birdY + bird.height - 30
+            trashX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
+            wormAnimation = false
         }
-        canvas.drawBitmap(trash, trashX.toFloat(), trashY.toFloat(), null)
-        canvas.drawBitmap(hand, handX.toFloat(), handY.toFloat(), null)
-        canvas.drawBitmap(plastic, plasticX.toFloat(), plasticY.toFloat(), null)
+        canvas.drawBitmap(nest, trashX.toFloat(), trashY.toFloat(), null)
+        canvas.drawBitmap(bird, birdX.toFloat(), birdY.toFloat(), null)
+        canvas.drawBitmap(worm, wormX.toFloat(), wormY.toFloat(), null)
         canvas.drawText("$points", 20f, TEXT_SIZE, textPaint)
         if (life == 2) healthPaint.color = Color.YELLOW else if (life == 1) healthPaint.color =
             Color.RED
@@ -156,8 +155,8 @@ class GameView(var gameContext: Context) : View(gameContext) {
         val touchX = event.x
         val touchY = event.y
         if (event.action == MotionEvent.ACTION_DOWN) {
-            if (!plasticAnimation && touchX >= handX && touchX <= handY + hand.height) {
-                plasticAnimation = true
+            if (!wormAnimation && touchX >= birdX && touchX <= birdY + bird.height) {
+                wormAnimation = true
             }
         }
         return true
