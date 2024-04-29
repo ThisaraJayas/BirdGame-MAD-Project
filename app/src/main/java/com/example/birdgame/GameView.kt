@@ -34,11 +34,9 @@ class GameView(var gameContext: Context) : View(gameContext) {
     private var textPaint: Paint
     private var healthPaint: Paint
     private var life = 3
-    private var handSpeed: Int
-
-    // Declaring trashX and trashY as member variables
-    private var trashX: Int
-    private var trashY: Int
+    private var birdSpeed: Int
+    private var nestX: Int
+    private var nestY: Int
 
     private val sharedPreferences: SharedPreferences = gameContext.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE)
     fun saveHighScore(score: Int){
@@ -66,7 +64,6 @@ class GameView(var gameContext: Context) : View(gameContext) {
         random = Random()
         val minY = deviceHeight / 3
         val maxY = deviceHeight * 2 / 3
-
         birdX = deviceWidth + random.nextInt(300)
 //        birdY = random.nextInt(600)
         birdY = minY + random.nextInt(maxY - minY)
@@ -78,9 +75,9 @@ class GameView(var gameContext: Context) : View(gameContext) {
         textPaint.textAlign = Paint.Align.LEFT
         healthPaint = Paint()
         healthPaint.color = Color.GREEN
-        handSpeed = 10 + random.nextInt(11)
-        trashX = deviceWidth / 2 - nest.width / 2
-        trashY = deviceHeight - nest.height
+        birdSpeed = 10 + random.nextInt(11)
+        nestX = deviceWidth / 2 - nest.width / 2
+        nestY = deviceHeight - nest.height
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -88,15 +85,15 @@ class GameView(var gameContext: Context) : View(gameContext) {
         var backgroundImg = BitmapFactory.decodeResource(resources, R.drawable.gamebackground1)
         canvas.drawBitmap(backgroundImg, 0f,0f,null)
         if (!wormAnimation) {
-            birdX -= handSpeed
-            wormX -= handSpeed
+            birdX -= birdSpeed
+            wormX -= birdSpeed
         }
         if (birdX <= -bird.width) {
             birdX = deviceWidth + random.nextInt(300)
             wormX = birdX
             birdY = random.nextInt(600)
             wormY = birdY + bird.height - 30
-            handSpeed = 10 + random.nextInt(11)
+            birdSpeed = 10 + random.nextInt(11)
             life--
             if (life == 0) {
                 saveHighScore(points)
@@ -109,14 +106,14 @@ class GameView(var gameContext: Context) : View(gameContext) {
         if (wormAnimation) {
             wormY += 40
         }
-        if (wormAnimation && wormX + worm.width >= trashX && wormX <= trashX + nest.width && wormY + worm.height >= deviceHeight - nest.height && wormY <= deviceHeight) {
+        if (wormAnimation && wormX + worm.width >= nestX && wormX <= nestX + nest.width && wormY + worm.height >= deviceHeight - nest.height && wormY <= deviceHeight) {
             birdX = deviceWidth + random.nextInt(300)
             wormX = birdX
             birdY = random.nextInt(600)
             wormY = birdY + bird.height - 30
-            handSpeed = 10 + random.nextInt(11)
+            birdSpeed = 10 + random.nextInt(11)
             points++
-            trashX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
+            nestX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
             wormAnimation = false
         }
         if (wormAnimation && wormY + worm.height >= deviceHeight) {
@@ -132,10 +129,10 @@ class GameView(var gameContext: Context) : View(gameContext) {
             wormX = birdX
             birdY = random.nextInt(600)
             wormY = birdY + bird.height - 30
-            trashX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
+            nestX = bird.width + random.nextInt(deviceWidth - 2 * bird.width)
             wormAnimation = false
         }
-        canvas.drawBitmap(nest, trashX.toFloat(), trashY.toFloat(), null)
+        canvas.drawBitmap(nest, nestX.toFloat(), nestY.toFloat(), null)
         canvas.drawBitmap(bird, birdX.toFloat(), birdY.toFloat(), null)
         canvas.drawBitmap(worm, wormX.toFloat(), wormY.toFloat(), null)
         canvas.drawText("$points", 20f, TEXT_SIZE, textPaint)
