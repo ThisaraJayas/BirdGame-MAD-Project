@@ -47,7 +47,6 @@ class GameView(var gameContext: Context) : View(gameContext) {
                 apply()
             }
         }
-
     }
     fun getHighScore(): Int {
         return sharedPreferences.getInt("highScore", 0)
@@ -84,10 +83,12 @@ class GameView(var gameContext: Context) : View(gameContext) {
         super.onDraw(canvas)
         var backgroundImg = BitmapFactory.decodeResource(resources, R.drawable.gamebackground1)
         canvas.drawBitmap(backgroundImg, 0f,0f,null)
+//        Move bird to left
         if (!wormAnimation) {
             birdX -= birdSpeed
             wormX -= birdSpeed
         }
+//        bird animation goes off the screen horizontally
         if (birdX <= -bird.width) {
             birdX = deviceWidth + random.nextInt(300)
             wormX = birdX
@@ -103,6 +104,7 @@ class GameView(var gameContext: Context) : View(gameContext) {
                 (gameContext as Activity).finish()
             }
         }
+//        moves or increments worm vertically y-coordinates if animation present
         if (wormAnimation) {
             wormY += 40
         }
